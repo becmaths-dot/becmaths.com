@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academic Documentation Portal</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div id="app">
+    <section id="loginView" class="center-screen">
+      <div class="login-card">
+        <div class="brand-mark">A</div>
+        <h1>Academic Documentation Portal</h1>
+        <p class="muted">Personal academic file management</p>
+        <form id="loginForm">
+          <label>Email</label>
+          <input id="email" type="email" required placeholder="Your email" />
+          <label>Password</label>
+          <input id="password" type="password" required placeholder="Password" />
+          <button type="submit" class="primary full">Login</button>
+          <p id="loginMessage" class="message"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="dashboardView" class="hidden">
+      <header class="topbar">
+        <div>
+          <h1>Dr. Mahadev Biradar</h1>
+          <p>Academic Documentation Portal</p>
+        </div>
+        <button id="logoutBtn" class="secondary">Logout</button>
+      </header>
+
+      <main class="container">
+        <div id="globalMessage" class="message"></div>
+
+        <div class="toolbar">
+          <div>
+            <h2>Academic Years</h2>
+            <p class="muted">Create an academic year and maintain up to 4 subjects in each semester.</p>
+          </div>
+          <button id="addYearBtn" class="primary">+ Add Academic Year</button>
+        </div>
+
+        <div id="yearsList" class="year-list"></div>
+
+        <div class="other-sections">
+          <h2>Other Academic Records</h2>
+          <div class="section-grid">
+            <div class="section-card">NBA</div>
+            <div class="section-card">NAAC</div>
+            <div class="section-card">Research</div>
+            <div class="section-card">Publications</div>
+            <div class="section-card">FDP / STTP</div>
+            <div class="section-card">BOS / University Duties</div>
+            <div class="section-card">Certificates</div>
+            <div class="section-card">Awards & Achievements</div>
+          </div>
+          <p class="muted small">These sections are placeholders in Version 1. We will connect them to storage later.</p>
+        </div>
+      </main>
+    </section>
+  </div>
+
+  <div id="yearModal" class="modal hidden">
+    <div class="modal-card">
+      <button class="close" data-close="yearModal">×</button>
+      <h2>Add Academic Year</h2>
+      <form id="yearForm">
+        <label>Academic Year</label>
+        <input id="yearName" required placeholder="2026-27" />
+        <button class="primary full" type="submit">Create</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="semesterModal" class="modal hidden">
+    <div class="modal-card">
+      <button class="close" data-close="semesterModal">×</button>
+      <h2>Add Semester</h2>
+      <form id="semesterForm">
+        <input id="semesterYearId" type="hidden" />
+        <label>Semester</label>
+        <select id="semesterNumber" required>
+          <option value="">Select semester</option>
+          <option value="1">Semester 1</option>
+          <option value="2">Semester 2</option>
+          <option value="3">Semester 3</option>
+          <option value="4">Semester 4</option>
+          <option value="5">Semester 5</option>
+          <option value="6">Semester 6</option>
+          <option value="7">Semester 7</option>
+          <option value="8">Semester 8</option>
+        </select>
+        <button class="primary full" type="submit">Create Semester</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="subjectModal" class="modal hidden">
+    <div class="modal-card">
+      <button class="close" data-close="subjectModal">×</button>
+      <h2>Add Subject</h2>
+      <form id="subjectForm">
+        <input id="subjectSemesterId" type="hidden" />
+        <label>Subject Number</label>
+        <select id="subjectNumber" required>
+          <option value="">Select</option>
+          <option value="1">Subject 1</option>
+          <option value="2">Subject 2</option>
+          <option value="3">Subject 3</option>
+          <option value="4">Subject 4</option>
+        </select>
+        <label>Subject Code</label>
+        <input id="subjectCode" placeholder="e.g. 21MAT31" />
+        <label>Subject Name</label>
+        <input id="subjectName" required placeholder="Engineering Mathematics" />
+        <button class="primary full" type="submit">Create Subject</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="subjectViewModal" class="modal hidden">
+    <div class="modal-card wide">
+      <button class="close" data-close="subjectViewModal">×</button>
+      <div id="subjectHeader"></div>
+      <div class="upload-box">
+        <h3>Upload Academic Document</h3>
+        <label>Document Category</label>
+        <select id="documentType">
+          <option>Syllabus</option>
+          <option>Lesson Plan</option>
+          <option>Course Plan</option>
+          <option>Student List</option>
+          <option>Attendance</option>
+          <option>CIE-I</option>
+          <option>CIE-II</option>
+          <option>CIE-III</option>
+          <option>Question Paper</option>
+          <option>Evaluated Answer Scripts</option>
+          <option>CIE Result</option>
+          <option>CO-PO-PSO Mapping</option>
+          <option>CO Attainment</option>
+          <option>Result Analysis</option>
+          <option>Student Feedback</option>
+          <option>Action Taken Report</option>
+          <option>Course File</option>
+          <option>Activity Photographs</option>
+          <option>Other</option>
+        </select>
+        <input id="fileInput" type="file" />
+        <button id="uploadBtn" class="primary">Upload File</button>
+        <p class="muted small">Maximum file size: 50 MB (current bucket limit).</p>
+        <p id="uploadMessage" class="message"></p>
+      </div>
+      <h3>Documents</h3>
+      <div id="documentsList"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
