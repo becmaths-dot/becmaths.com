@@ -1,161 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BEC Bagalkote – Academic Documentation Portal</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-  </script>
-</head>
-<body>
-  <div id="app">
-
-    <!-- ═══ LOGIN VIEW ═══ -->
-    <section id="loginView" class="center-screen">
-      <div class="login-card">
-        <div class="brand-mark">B</div>
-        <h1>Academic Documentation Portal</h1>
-        <p class="subhead">Streamline your academic records</p>
-        <div class="college-name">🏛️ Basaveshwar Engineering College, Bagalkote</div>
-        <div class="dept-name">📐 Department of Mathematics</div>
-        <form id="loginForm">
-          <label>Email</label>
-          <input id="email" type="email" required placeholder="your.email@becbgk.edu" />
-          <label>Password</label>
-          <input id="password" type="password" required placeholder="••••••••" />
-          <button type="submit" class="primary full">🔐 Login</button>
-          <p id="loginMessage" class="message"></p>
-        </form>
-        <div class="signup-link">
-          Don't have an account? <a id="showSignupBtn">Sign Up</a>
-        </div>
-        <div class="login-footer">Secure · Academic · Documentation</div>
-      </div>
-    </section>
-
-    <!-- ═══ DASHBOARD VIEW ═══ -->
-    <section id="dashboardView" class="hidden">
-      <!-- Topbar -->
-      <header class="topbar">
-        <div class="brand">
-          <div class="brand-icon">B</div>
-          <div class="brand-text">
-            <h1>BEC Bagalkote</h1>
-            <div class="sub"><strong>Department of Mathematics</strong> · Academic Documentation Portal</div>
-          </div>
-        </div>
-        <div class="user-actions">
-          <span class="user-badge" id="userBadge">👤 Dr. Mahadev Biradar</span>
-          <button id="logoutBtn" class="secondary">🚪 Logout</button>
-        </div>
-      </header>
-
-      <main class="container">
-        <div id="globalMessage" class="message"></div>
-
-        <!-- Toolbar -->
-        <div class="toolbar">
-          <div>
-            <h2>📚 Academic Years</h2>
-            <p class="muted">Create an academic year and maintain up to 4 subjects per semester.</p>
-          </div>
-          <button id="addYearBtn" class="primary">➕ Add Academic Year</button>
-        </div>
-
-        <!-- Year List -->
-        <div id="yearsList" class="year-list"></div>
-
-        <!-- Other Sections -->
-        <div class="other-sections">
-          <h2>📂 Other Academic Records</h2>
-          <div class="section-grid">
-            <div class="section-card">🏅 NBA</div>
-            <div class="section-card">⭐ NAAC</div>
-            <div class="section-card">🔬 Research</div>
-            <div class="section-card">📄 Publications</div>
-            <div class="section-card">🎓 FDP / STTP</div>
-            <div class="section-card">📋 BOS / University Duties</div>
-            <div class="section-card">📜 Certificates</div>
-            <div class="section-card">🏆 Awards &amp; Achievements</div>
-          </div>
-          <p class="muted small">These sections are placeholders in Version 1. We will connect them to storage later.</p>
-        </div>
-      </main>
-    </section>
-  </div>
-
-  <!-- ═══ MODALS ═══ -->
-
-  <!-- Add Year -->
-  <div id="yearModal" class="modal hidden">
-    <div class="modal-card">
-      <button class="close" data-close="yearModal">×</button>
-      <h2>📅 Add Academic Year</h2>
-      <form id="yearForm">
-        <label>Academic Year</label>
-        <input id="yearName" required placeholder="e.g. 2026-27" />
-        <button class="primary full" type="submit">Create Year</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Add Semester -->
-  <div id="semesterModal" class="modal hidden">
-    <div class="modal-card">
-      <button class="close" data-close="semesterModal">×</button>
-      <h2>📖 Add Semester</h2>
-      <form id="semesterForm">
-        <input id="semesterYearId" type="hidden" />
-        <label>Semester</label>
-        <select id="semesterNumber" required>
-          <option value="">Select semester</option>
-          <option value="1">Semester 1</option>
-          <option value="2">Semester 2</option>
-          <option value="3">Semester 3</option>
-          <option value="4">Semester 4</option>
-          <option value="5">Semester 5</option>
-          <option value="6">Semester 6</option>
-          <option value="7">Semester 7</option>
-          <option value="8">Semester 8</option>
-        </select>
-        <button class="primary full" type="submit">Create Semester</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Add Subject -->
-  <div id="subjectModal" class="modal hidden">
-    <div class="modal-card">
-      <button class="close" data-close="subjectModal">×</button>
-      <h2>📘 Add Subject</h2>
-      <form id="subjectForm">
-        <input id="subjectSemesterId" type="hidden" />
-        <label>Subject Number</label>
-        <select id="subjectNumber" required>
-          <option value="">Select</option>
-          <option value="1">Subject 1</option>
-          <option value="2">Subject 2</option>
-          <option value="3">Subject 3</option>
-          <option value="4">Subject 4</option>
-        </select>
-        <label>Subject Code</label>
-        <input id="subjectCode" placeholder="e.g. 21MAT31" />
-        <label>Subject Name</label>
-        <input id="subjectName" required placeholder="Engineering Mathematics" />
-        <button class="primary full" type="submit">Create Subject</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Subject View (documents) -->
+  <!-- Subject View (documents + attendance) -->
   <div id="subjectViewModal" class="modal hidden">
     <div class="modal-card wide">
       <button class="close" data-close="subjectViewModal">×</button>
       <div id="subjectHeader"></div>
+
+      <!-- Attendance Section -->
+      <div class="attendance-section">
+        <h3>📋 Take Attendance</h3>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:end;">
+          <div style="min-width:150px;">
+            <label>Date</label>
+            <input type="date" id="attendanceDate" />
+          </div>
+          <div style="min-width:150px;">
+            <label>Total Students</label>
+            <input type="number" id="attendanceTotal" min="1" max="200" placeholder="e.g. 60" />
+          </div>
+          <button id="generateGridBtn" class="secondary" style="margin-top:22px;">📊 Generate Grid</button>
+        </div>
+        <p id="attendanceMessage" class="message"></p>
+
+        <!-- Roll Number Grid -->
+        <div id="rollGrid" style="margin-top:12px; display:none;">
+          <p class="muted small">Click a roll number to mark <strong>absent</strong> (red). Click again to mark present.</p>
+          <div id="rollGridContainer" style="display:flex; flex-wrap:wrap; gap:8px; margin:10px 0;"></div>
+          <button id="saveAttendanceBtn" class="primary">💾 Save Attendance</button>
+          <button id="clearGridBtn" class="secondary" style="margin-left:8px;">🔄 Reset Grid</button>
+        </div>
+      </div>
+
+      <!-- Attendance History -->
+      <div style="margin:16px 0;">
+        <h3>📜 Attendance History</h3>
+        <div id="attendanceList" style="max-height:200px; overflow-y:auto;">
+          <p class="muted">Loading...</p>
+        </div>
+      </div>
+
+      <!-- Document Upload -->
       <div class="upload-box">
         <h3>📤 Upload Academic Document</h3>
         <label>Document Category</label>
@@ -190,28 +72,3 @@
       <div id="documentsList"></div>
     </div>
   </div>
-
-  <!-- ═══ SIGNUP MODAL ═══ -->
-  <div id="signupModal" class="modal hidden">
-    <div class="modal-card">
-      <button class="close" data-close="signupModal">×</button>
-      <h2>📝 Create Account</h2>
-      <form id="signupForm">
-        <label>Email</label>
-        <input id="signupEmail" type="email" required placeholder="your.email@becbgk.edu" />
-        <label>Password</label>
-        <input id="signupPassword" type="password" required placeholder="Min 6 characters" />
-        <label>Confirm Password</label>
-        <input id="signupConfirm" type="password" required placeholder="Re-enter password" />
-        <button type="submit" class="primary full">Sign Up</button>
-        <p id="signupMessage" class="message"></p>
-      </form>
-      <p style="margin-top:12px;text-align:center;font-size:0.9rem;">
-        Already have an account? <a id="showLoginFromSignup" style="color:var(--primary);font-weight:600;cursor:pointer;">Login</a>
-      </p>
-    </div>
-  </div>
-
-  <script src="app.js"></script>
-</body>
-</html>
