@@ -1,96 +1,1624 @@
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #f5f7fb;
-  color: #1f2937;
-}
-.hidden { display: none !important; }
-.center-screen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-.login-card {
-  width: min(430px, 100%);
-  background: white;
-  padding: 34px;
-  border-radius: 16px;
-  box-shadow: 0 10px 35px rgba(0,0,0,.08);
-}
-.brand-mark {
-  width: 54px; height: 54px; border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  background: #111827; color: white; font-size: 28px; font-weight: 700;
-  margin-bottom: 16px;
-}
-h1,h2,h3 { margin-top: 0; }
-label { display:block; margin: 14px 0 7px; font-weight: 600; }
-input, select {
-  width: 100%; padding: 11px 12px; border: 1px solid #d1d5db;
-  border-radius: 9px; background: white; font-size: 15px;
-}
-button {
-  border: 0; border-radius: 9px; padding: 11px 16px;
-  font-weight: 600; cursor: pointer;
-}
-.primary { background: #111827; color: white; }
-.secondary { background: #e5e7eb; color: #111827; }
-.full { width: 100%; margin-top: 18px; }
-.muted { color: #6b7280; }
-.small { font-size: 13px; }
-.message { min-height: 20px; margin-top: 10px; }
-.topbar {
-  background: #111827; color: white; padding: 18px 5%;
-  display:flex; justify-content:space-between; align-items:center;
-}
-.topbar h1 { margin: 0 0 4px; font-size: 22px; }
-.topbar p { margin: 0; opacity: .75; }
-.container { width: min(1200px, 92%); margin: 30px auto; }
-.toolbar { display:flex; justify-content:space-between; gap:20px; align-items:center; margin-bottom:20px; }
-.year-card {
-  background: white; border-radius: 14px; padding: 20px; margin-bottom: 18px;
-  box-shadow: 0 3px 16px rgba(0,0,0,.06);
-}
-.year-header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
-.semester-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin-top:16px; }
-.semester-card { border:1px solid #e5e7eb; border-radius:12px; padding:16px; }
-.subject-list { margin-top:12px; display:grid; gap:8px; }
-.subject-row {
-  display:flex; justify-content:space-between; align-items:center; gap:8px;
-  padding:10px; background:#f9fafb; border-radius:8px;
-}
-.subject-row button { padding:8px 10px; background:#e5e7eb; }
-.add-btn { margin-top:12px; }
-.other-sections { margin-top:35px; }
-.section-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
-.section-card { background:white; padding:20px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.05); font-weight:700; }
-.modal {
-  position:fixed; inset:0; background:rgba(0,0,0,.5);
-  display:flex; align-items:center; justify-content:center; padding:20px; z-index:10;
-}
-.modal-card {
-  position:relative; width:min(480px,100%); max-height:90vh; overflow:auto;
-  background:white; border-radius:16px; padding:26px;
-}
-.modal-card.wide { width:min(850px,100%); }
-.close {
-  position:absolute; right:15px; top:12px; background:#f3f4f6;
-  width:34px; height:34px; padding:0; font-size:22px;
-}
-.upload-box { background:#f9fafb; border-radius:12px; padding:16px; margin:18px 0; }
-.doc-row {
-  border:1px solid #e5e7eb; border-radius:10px; padding:12px;
-  margin-bottom:9px; display:flex; justify-content:space-between; gap:12px; align-items:center;
-}
-.doc-name { font-weight:600; word-break:break-word; }
-.doc-meta { font-size:12px; color:#6b7280; margin-top:4px; }
-.doc-actions { display:flex; gap:7px; flex-shrink:0; }
-.doc-actions button { padding:8px 10px; }
-@media (max-width:650px) {
-  .toolbar,.year-header,.doc-row { flex-direction:column; align-items:stretch; }
-  .topbar { padding:16px; }
-  .container { width:94%; }
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BEC Bagalkote – Academic Documentation Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+  </script>
+  <style>
+    /* ───────── RESET & BASE ───────── */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --primary-dark: #0f2b4f;
+      --primary: #1a3e6f;
+      --primary-light: #2b5a9c;
+      --primary-gradient: linear-gradient(135deg, #0f2b4f, #1a3e6f, #2b5a9c);
+      --gold: #c9a84c;
+      --gold-light: #e8d28a;
+      --gold-dark: #a88a2e;
+      --accent: #2d9cdb;
+      --accent-light: #6ab7e8;
+      --bg: #f0f4fa;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 12px 40px rgba(15, 43, 79, 0.12);
+      --shadow-hover: 0 20px 60px rgba(15, 43, 79, 0.20);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: 0.25s ease;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    html {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(145deg, #e8edf5 0%, #d5dfec 100%);
+    }
+
+    /* ───────── UTILITY ───────── */
+    .hidden {
+      display: none !important;
+    }
+    .muted {
+      color: var(--text-muted);
+    }
+    .small {
+      font-size: 0.85rem;
+    }
+    .full {
+      width: 100%;
+    }
+    .message {
+      min-height: 1.6em;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+    .message.error {
+      color: #b91c1c;
+    }
+    .message.success {
+      color: #0b6e4f;
+    }
+
+    /* ───────── BUTTONS ───────── */
+    button {
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 22px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+    button.primary {
+      background: var(--primary-gradient);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(26, 62, 111, 0.30);
+    }
+    button.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(26, 62, 111, 0.40);
+    }
+    button.secondary {
+      background: var(--gold);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(201, 168, 76, 0.30);
+    }
+    button.secondary:hover {
+      background: var(--gold-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(201, 168, 76, 0.40);
+    }
+    button.outline {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    button.outline:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    button.danger {
+      background: #b91c1c;
+      color: #fff;
+    }
+    button.danger:hover {
+      background: #7f1d1d;
+    }
+    button.sm {
+      padding: 6px 14px;
+      font-size: 0.8rem;
+    }
+
+    /* ───────── LOGIN SCREEN ───────── */
+    #loginView {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--primary-gradient);
+      position: relative;
+      overflow: hidden;
+    }
+    #loginView::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -30%;
+      width: 80%;
+      height: 120%;
+      background: radial-gradient(ellipse, rgba(201, 168, 76, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    #loginView::after {
+      content: '';
+      position: absolute;
+      bottom: -40%;
+      left: -20%;
+      width: 60%;
+      height: 100%;
+      background: radial-gradient(ellipse, rgba(45, 156, 219, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius);
+      padding: 44px 36px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.30);
+      position: relative;
+      z-index: 2;
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      transition: var(--transition);
+    }
+    .login-card:hover {
+      transform: translateY(-4px);
+    }
+    .login-card .brand-mark {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 auto 18px;
+      box-shadow: 0 8px 28px rgba(26, 62, 111, 0.30);
+    }
+    .login-card h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-align: center;
+      color: var(--primary);
+      letter-spacing: -0.02em;
+    }
+    .login-card .subhead {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+    .login-card .college-name {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--primary-dark);
+      margin-top: 8px;
+      letter-spacing: 0.3px;
+    }
+    .login-card .dept-name {
+      text-align: center;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--gold-dark);
+      margin-top: 2px;
+    }
+    .login-card form {
+      margin-top: 28px;
+    }
+    .login-card label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-top: 16px;
+      margin-bottom: 4px;
+    }
+    .login-card input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-family: var(--font);
+      transition: var(--transition);
+      background: #f8fafc;
+    }
+    .login-card input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 4px rgba(43, 90, 156, 0.12);
+      background: #fff;
+    }
+    .login-card button.primary {
+      margin-top: 24px;
+      padding: 14px;
+      font-size: 1rem;
+      border-radius: var(--radius-sm);
+    }
+    .login-card .login-footer {
+      margin-top: 16px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ───────── DASHBOARD ───────── */
+    #dashboardView {
+      width: 100%;
+      min-height: 100vh;
+      background: var(--bg);
+    }
+
+    /* Topbar */
+    .topbar {
+      background: var(--primary-gradient);
+      padding: 16px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: 0 4px 20px rgba(15, 43, 79, 0.25);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topbar .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .topbar .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.20);
+      flex-shrink: 0;
+    }
+    .topbar .brand-text h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin: 0 0 2px;
+    }
+    .topbar .brand-text .sub {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.75);
+      font-weight: 400;
+    }
+    .topbar .brand-text .sub strong {
+      color: var(--gold-light);
+      font-weight: 600;
+    }
+    .topbar .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .topbar .user-badge {
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 6px 18px;
+      background: rgba(255, 255, 255, 0.10);
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .topbar button.secondary {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      box-shadow: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 8px 18px;
+    }
+    .topbar button.secondary:hover {
+      background: rgba(255, 255, 255, 0.22);
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Container */
+    .container {
+      width: min(1360px, 92%);
+      margin: 28px auto 60px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding: 22px 28px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .toolbar h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0 0 4px;
+    }
+    .toolbar p.muted {
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    /* Year List */
+    .year-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .year-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .year-card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+    .year-card .year-header {
+      padding: 18px 24px;
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .year-card .year-header h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+    }
+    .year-card .year-header h3 .badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: var(--gold);
+      color: #fff;
+      padding: 2px 14px;
+      border-radius: 50px;
+    }
+    .year-card .year-header .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .semester-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      padding: 20px 24px 24px;
+    }
+
+    .semester-card {
+      background: #f8fafc;
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      transition: var(--transition);
+    }
+    .semester-card:hover {
+      border-color: var(--primary-light);
+      background: #fff;
+    }
+    .semester-card .semester-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .semester-card .semester-head h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 0;
+    }
+    .semester-card .subject-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .semester-card .subject-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #fff;
+      border-radius: 6px;
+      border: 1px solid #eef2f6;
+      font-size: 0.85rem;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .semester-card .subject-item:hover {
+      border-color: var(--accent);
+      background: #f0f7fe;
+    }
+    .semester-card .subject-item .code {
+      font-weight: 600;
+      color: var(--primary-light);
+      font-size: 0.75rem;
+      background: #e8edf5;
+      padding: 1px 10px;
+      border-radius: 4px;
+    }
+    .semester-card .subject-item .name {
+      flex: 1;
+      margin: 0 8px;
+      font-weight: 500;
+    }
+    .semester-card .add-subject {
+      margin-top: 10px;
+      width: 100%;
+      padding: 8px;
+      font-size: 0.8rem;
+      border: 2px dashed var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+    .semester-card .add-subject:hover {
+      border-color: var(--primary-light);
+      color: var(--primary);
+      background: rgba(43, 90, 156, 0.04);
+    }
+
+    /* ───────── OTHER SECTIONS ───────── */
+    .other-sections {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 2px solid var(--border);
+    }
+    .other-sections h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0 0 16px;
+    }
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 18px 16px;
+      text-align: center;
+      font-weight: 600;
+      color: var(--primary);
+      transition: var(--transition);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      cursor: default;
+    }
+    .section-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+      border-color: var(--gold-light);
+      background: linear-gradient(135deg, #fff, #fdf9ef);
+    }
+    .other-sections .muted.small {
+      margin-top: 14px;
+      font-style: italic;
+    }
+
+    /* ───────── MODALS ───────── */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 43, 79, 0.60);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 999;
+      animation: fadeIn 0.2s ease;
+    }
+    .modal.hidden {
+      display: none !important;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      max-width: 520px;
+      width: 100%;
+      padding: 36px 32px 32px;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.35);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-card.wide {
+      max-width: 780px;
+    }
+    .modal-card .close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      font-size: 2rem;
+      line-height: 1;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+    .modal-card .close:hover {
+      background: #f1f5f9;
+      color: var(--text);
+    }
+    .modal-card h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0 0 20px;
+    }
+    .modal-card label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-top: 16px;
+      margin-bottom: 4px;
+    }
+    .modal-card input,
+    .modal-card select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-family: var(--font);
+      transition: var(--transition);
+      background: #f8fafc;
+    }
+    .modal-card input:focus,
+    .modal-card select:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 4px rgba(43, 90, 156, 0.10);
+      background: #fff;
+    }
+    .modal-card button.primary {
+      margin-top: 22px;
+      padding: 13px;
+      font-size: 1rem;
+    }
+
+    /* Upload box */
+    .upload-box {
+      background: #f8fafc;
+      border-radius: var(--radius-sm);
+      padding: 20px 20px 16px;
+      margin: 16px 0 20px;
+      border: 2px dashed var(--border);
+    }
+    .upload-box h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 0 0 12px;
+    }
+    .upload-box label {
+      margin-top: 10px;
+      font-weight: 500;
+      font-size: 0.8rem;
+    }
+    .upload-box select,
+    .upload-box input[type="file"] {
+      margin-top: 2px;
+    }
+    .upload-box input[type="file"] {
+      padding: 8px 0;
+      border: none;
+      background: transparent;
+    }
+    .upload-box .message {
+      margin-top: 10px;
+      font-size: 0.85rem;
+    }
+
+    /* Documents list */
+    #documentsList {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    #documentsList .doc-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    #documentsList .doc-item .doc-name {
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #documentsList .doc-item .doc-name .type-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      background: var(--primary-light);
+      color: #fff;
+      padding: 1px 12px;
+      border-radius: 50px;
+    }
+    #documentsList .doc-item .doc-actions {
+      display: flex;
+      gap: 6px;
+    }
+    #documentsList .doc-item .doc-actions button {
+      padding: 4px 10px;
+      font-size: 0.7rem;
+    }
+
+    /* ───────── RESPONSIVE ───────── */
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 12px 16px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .topbar .brand-text h1 {
+        font-size: 1.1rem;
+      }
+      .topbar .user-actions {
+        justify-content: space-between;
+      }
+      .container {
+        width: 94%;
+        margin: 16px auto;
+      }
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+      }
+      .login-card {
+        padding: 32px 20px;
+      }
+      .modal-card {
+        padding: 24px 18px;
+      }
+      .modal-card.wide {
+        max-width: 100%;
+        margin: 12px;
+      }
+      .semester-grid {
+        grid-template-columns: 1fr;
+        padding: 12px 0;
+      }
+      .year-card .year-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .section-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 480px) {
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+      .topbar .brand-text .sub {
+        font-size: 0.7rem;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #eef2f6;
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-light);
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+
+    <!-- ═══ LOGIN VIEW ═══ -->
+    <section id="loginView" class="center-screen">
+      <div class="login-card">
+        <div class="brand-mark">B</div>
+        <h1>Academic Documentation Portal</h1>
+        <p class="subhead">Streamline your academic records</p>
+        <div class="college-name">🏛️ Basaveshwar Engineering College, Bagalkote</div>
+        <div class="dept-name">📐 Department of Mathematics</div>
+        <form id="loginForm">
+          <label>Email</label>
+          <input id="email" type="email" required placeholder="your.email@becbgk.edu" />
+          <label>Password</label>
+          <input id="password" type="password" required placeholder="••••••••" />
+          <button type="submit" class="primary full">🔐 Login</button>
+          <p id="loginMessage" class="message"></p>
+        </form>
+        <div class="login-footer">Secure · Academic · Documentation</div>
+      </div>
+    </section>
+
+    <!-- ═══ DASHBOARD VIEW ═══ -->
+    <section id="dashboardView" class="hidden">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-icon">B</div>
+          <div class="brand-text">
+            <h1>BEC Bagalkote</h1>
+            <div class="sub"><strong>Department of Mathematics</strong> · Academic Documentation Portal</div>
+          </div>
+        </div>
+        <div class="user-actions">
+          <span class="user-badge" id="userBadge">👤 Dr. Mahadev Biradar</span>
+          <button id="logoutBtn" class="secondary">🚪 Logout</button>
+        </div>
+      </header>
+
+      <main class="container">
+        <div id="globalMessage" class="message"></div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div>
+            <h2>📚 Academic Years</h2>
+            <p class="muted">Create an academic year and maintain up to 4 subjects per semester.</p>
+          </div>
+          <button id="addYearBtn" class="primary">➕ Add Academic Year</button>
+        </div>
+
+        <!-- Year List -->
+        <div id="yearsList" class="year-list"></div>
+
+        <!-- Other Sections -->
+        <div class="other-sections">
+          <h2>📂 Other Academic Records</h2>
+          <div class="section-grid">
+            <div class="section-card">🏅 NBA</div>
+            <div class="section-card">⭐ NAAC</div>
+            <div class="section-card">🔬 Research</div>
+            <div class="section-card">📄 Publications</div>
+            <div class="section-card">🎓 FDP / STTP</div>
+            <div class="section-card">📋 BOS / University Duties</div>
+            <div class="section-card">📜 Certificates</div>
+            <div class="section-card">🏆 Awards &amp; Achievements</div>
+          </div>
+          <p class="muted small">These sections are placeholders in Version 1. We will connect them to storage later.</p>
+        </div>
+      </main>
+    </section>
+  </div>
+
+  <!-- ═══ MODALS ═══ -->
+
+  <!-- Add Year -->
+  <div id="yearModal" class="modal hidden">
+    <div class="modal-card">
+      <button class="close" data-close="yearModal">×</button>
+      <h2>📅 Add Academic Year</h2>
+      <form id="yearForm">
+        <label>Academic Year</label>
+        <input id="yearName" required placeholder="e.g. 2026-27" />
+        <button class="primary full" type="submit">Create Year</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Semester -->
+  <div id="semesterModal" class="modal hidden">
+    <div class="modal-card">
+      <button class="close" data-close="semesterModal">×</button>
+      <h2>📖 Add Semester</h2>
+      <form id="semesterForm">
+        <input id="semesterYearId" type="hidden" />
+        <label>Semester</label>
+        <select id="semesterNumber" required>
+          <option value="">Select semester</option>
+          <option value="1">Semester 1</option>
+          <option value="2">Semester 2</option>
+          <option value="3">Semester 3</option>
+          <option value="4">Semester 4</option>
+          <option value="5">Semester 5</option>
+          <option value="6">Semester 6</option>
+          <option value="7">Semester 7</option>
+          <option value="8">Semester 8</option>
+        </select>
+        <button class="primary full" type="submit">Create Semester</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Subject -->
+  <div id="subjectModal" class="modal hidden">
+    <div class="modal-card">
+      <button class="close" data-close="subjectModal">×</button>
+      <h2>📘 Add Subject</h2>
+      <form id="subjectForm">
+        <input id="subjectSemesterId" type="hidden" />
+        <label>Subject Number</label>
+        <select id="subjectNumber" required>
+          <option value="">Select</option>
+          <option value="1">Subject 1</option>
+          <option value="2">Subject 2</option>
+          <option value="3">Subject 3</option>
+          <option value="4">Subject 4</option>
+        </select>
+        <label>Subject Code</label>
+        <input id="subjectCode" placeholder="e.g. 21MAT31" />
+        <label>Subject Name</label>
+        <input id="subjectName" required placeholder="Engineering Mathematics" />
+        <button class="primary full" type="submit">Create Subject</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Subject View (documents) -->
+  <div id="subjectViewModal" class="modal hidden">
+    <div class="modal-card wide">
+      <button class="close" data-close="subjectViewModal">×</button>
+      <div id="subjectHeader"></div>
+      <div class="upload-box">
+        <h3>📤 Upload Academic Document</h3>
+        <label>Document Category</label>
+        <select id="documentType">
+          <option>Syllabus</option>
+          <option>Lesson Plan</option>
+          <option>Course Plan</option>
+          <option>Student List</option>
+          <option>Attendance</option>
+          <option>CIE-I</option>
+          <option>CIE-II</option>
+          <option>CIE-III</option>
+          <option>Question Paper</option>
+          <option>Evaluated Answer Scripts</option>
+          <option>CIE Result</option>
+          <option>CO-PO-PSO Mapping</option>
+          <option>CO Attainment</option>
+          <option>Result Analysis</option>
+          <option>Student Feedback</option>
+          <option>Action Taken Report</option>
+          <option>Course File</option>
+          <option>Activity Photographs</option>
+          <option>Other</option>
+        </select>
+        <label>File</label>
+        <input id="fileInput" type="file" />
+        <button id="uploadBtn" class="primary" style="margin-top:12px;">⬆ Upload File</button>
+        <p class="muted small" style="margin-top:6px;">Maximum file size: 50 MB (current bucket limit).</p>
+        <p id="uploadMessage" class="message"></p>
+      </div>
+      <h3 style="margin-top:8px;">📄 Documents</h3>
+      <div id="documentsList"></div>
+    </div>
+  </div>
+
+  <script>
+    // ════════════════════════════════════════════════
+    //  SUPABASE CONFIG — EDIT THESE
+    // ════════════════════════════════════════════════
+    const SUPABASE_URL = 'https://your-project.supabase.co';
+    const SUPABASE_ANON_KEY = 'your-anon-key';
+
+    // ════════════════════════════════════════════════
+    //  STATE
+    // ════════════════════════════════════════════════
+    let currentUser = null;
+    let currentSubjectId = null;
+    let allYears = [];
+
+    // ════════════════════════════════════════════════
+    //  DOM REFS
+    // ════════════════════════════════════════════════
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => document.querySelectorAll(sel);
+
+    const loginView = $('#loginView');
+    const dashboardView = $('#dashboardView');
+    const loginForm = $('#loginForm');
+    const emailInput = $('#email');
+    const passwordInput = $('#password');
+    const loginMessage = $('#loginMessage');
+    const logoutBtn = $('#logoutBtn');
+    const userBadge = $('#userBadge');
+    const globalMessage = $('#globalMessage');
+    const yearsList = $('#yearsList');
+    const addYearBtn = $('#addYearBtn');
+    const yearModal = $('#yearModal');
+    const yearForm = $('#yearForm');
+    const yearName = $('#yearName');
+    const semesterModal = $('#semesterModal');
+    const semesterForm = $('#semesterForm');
+    const semesterYearId = $('#semesterYearId');
+    const semesterNumber = $('#semesterNumber');
+    const subjectModal = $('#subjectModal');
+    const subjectForm = $('#subjectForm');
+    const subjectSemesterId = $('#subjectSemesterId');
+    const subjectNumber = $('#subjectNumber');
+    const subjectCode = $('#subjectCode');
+    const subjectName = $('#subjectName');
+    const subjectViewModal = $('#subjectViewModal');
+    const subjectHeader = $('#subjectHeader');
+    const documentType = $('#documentType');
+    const fileInput = $('#fileInput');
+    const uploadBtn = $('#uploadBtn');
+    const uploadMessage = $('#uploadMessage');
+    const documentsList = $('#documentsList');
+
+    // close buttons
+    $$('[data-close]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.close;
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+    });
+    // click outside to close
+    $$('.modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.add('hidden');
+      });
+    });
+
+    // ════════════════════════════════════════════════
+    //  SUPABASE CLIENT
+    // ════════════════════════════════════════════════
+    let supabase = null;
+    try {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (_) {
+      console.warn('Supabase not configured. Using demo mode.');
+    }
+
+    // ════════════════════════════════════════════════
+    //  AUTH
+    // ════════════════════════════════════════════════
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginMessage.textContent = '';
+      loginMessage.className = 'message';
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      if (!email || !password) {
+        loginMessage.textContent = 'Please fill in all fields.';
+        loginMessage.className = 'message error';
+        return;
+      }
+      if (!supabase) {
+        // Demo mode: accept any valid-looking login
+        if (email.includes('@') && password.length >= 4) {
+          currentUser = { email, user_metadata: { full_name: 'Dr. Mahadev Biradar' } };
+          showDashboard();
+        } else {
+          loginMessage.textContent = 'Demo: use any email + password (min 4 chars).';
+          loginMessage.className = 'message error';
+        }
+        return;
+      }
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        currentUser = data.user;
+        showDashboard();
+      } catch (err) {
+        loginMessage.textContent = err.message || 'Login failed.';
+        loginMessage.className = 'message error';
+      }
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      if (supabase) {
+        try { await supabase.auth.signOut(); } catch (_) {}
+      }
+      currentUser = null;
+      loginView.classList.remove('hidden');
+      dashboardView.classList.add('hidden');
+      loginMessage.textContent = '';
+      loginMessage.className = 'message';
+      emailInput.value = '';
+      passwordInput.value = '';
+    });
+
+    function showDashboard() {
+      loginView.classList.add('hidden');
+      dashboardView.classList.remove('hidden');
+      const name = currentUser?.user_metadata?.full_name || currentUser?.email || 'Dr. Mahadev Biradar';
+      userBadge.textContent = '👤 ' + name;
+      loadYears();
+    }
+
+    // ════════════════════════════════════════════════
+    //  YEARS CRUD
+    // ════════════════════════════════════════════════
+    async function loadYears() {
+      if (!supabase) {
+        // Demo data
+        allYears = [{
+          id: 'demo-1',
+          name: '2026-27',
+          semesters: [
+            { id: 's1', number: 1, subjects: [
+                { id: 'sub1', number: 1, code: '21MAT31', name: 'Engineering Mathematics' },
+                { id: 'sub2', number: 2, code: '21MAT32', name: 'Advanced Calculus' }
+              ] },
+            { id: 's2', number: 2, subjects: [
+                { id: 'sub3', number: 1, code: '21MAT41', name: 'Linear Algebra' }
+              ] }
+          ]
+        }];
+        renderYears();
+        return;
+      }
+      try {
+        const { data, error } = await supabase
+          .from('academic_years')
+          .select('*, semesters:academic_semesters(*, subjects:academic_subjects(*))')
+          .order('name', { ascending: false });
+        if (error) throw error;
+        allYears = data || [];
+        renderYears();
+      } catch (err) {
+        showGlobalMessage(err.message, 'error');
+      }
+    }
+
+    function renderYears() {
+      if (!allYears.length) {
+        yearsList.innerHTML = `
+          <div style="text-align:center;padding:60px 20px;background:var(--card-bg);border-radius:var(--radius);border:2px dashed var(--border);">
+            <p style="font-size:1.1rem;font-weight:500;color:var(--text-muted);">No academic years yet.</p>
+            <p class="muted small">Click "Add Academic Year" to get started.</p>
+          </div>
+        `;
+        return;
+      }
+      let html = '';
+      for (const year of allYears) {
+        const semesters = year.semesters || [];
+        html += `
+          <div class="year-card" data-year-id="${year.id}">
+            <div class="year-header">
+              <h3>📅 ${year.name} <span class="badge">${semesters.length} semesters</span></h3>
+              <div class="actions">
+                <button class="primary sm add-semester-btn" data-year-id="${year.id}">➕ Semester</button>
+                <button class="danger sm delete-year-btn" data-year-id="${year.id}">🗑️</button>
+              </div>
+            </div>
+            <div class="semester-grid">
+              ${semesters.length ? semesters.map(s => renderSemester(s, year.id)).join('') : `
+                <div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text-muted);font-style:italic;background:#f8fafc;border-radius:var(--radius-sm);border:1px dashed var(--border);">
+                  No semesters yet. Click "Semester" to add one.
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      }
+      yearsList.innerHTML = html;
+
+      // Event listeners
+      yearsList.querySelectorAll('.add-semester-btn').forEach(btn => {
+        btn.addEventListener('click', () => openSemesterModal(btn.dataset.yearId));
+      });
+      yearsList.querySelectorAll('.delete-year-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteYear(btn.dataset.yearId));
+      });
+      yearsList.querySelectorAll('.subject-item').forEach(el => {
+        el.addEventListener('click', () => openSubjectView(el.dataset.subjectId));
+      });
+      yearsList.querySelectorAll('.add-subject').forEach(btn => {
+        btn.addEventListener('click', () => openSubjectModal(btn.dataset.semesterId));
+      });
+    }
+
+    function renderSemester(sem, yearId) {
+      const subjects = sem.subjects || [];
+      return `
+        <div class="semester-card" data-semester-id="${sem.id}">
+          <div class="semester-head">
+            <h4>📖 Semester ${sem.number}</h4>
+            <button class="danger sm delete-semester-btn" data-semester-id="${sem.id}" data-year-id="${yearId}">✕</button>
+          </div>
+          <div class="subject-list">
+            ${subjects.map(sub => `
+              <div class="subject-item" data-subject-id="${sub.id}">
+                <span class="code">${sub.code || '—'}</span>
+                <span class="name">${sub.name}</span>
+                <span style="font-size:0.7rem;color:var(--text-muted);">#${sub.number}</span>
+              </div>
+            `).join('')}
+            ${subjects.length < 4 ? `
+              <button class="add-subject" data-semester-id="${sem.id}">➕ Add Subject</button>
+            ` : `
+              <div style="font-size:0.75rem;color:var(--text-muted);text-align:center;padding:4px 0;">Max 4 subjects</div>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    // ── Add Year ──
+    addYearBtn.addEventListener('click', () => {
+      yearName.value = '';
+      yearModal.classList.remove('hidden');
+    });
+
+    yearForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = yearName.value.trim();
+      if (!name) return;
+      if (!supabase) {
+        allYears.push({ id: 'demo-' + Date.now(), name, semesters: [] });
+        renderYears();
+        yearModal.classList.add('hidden');
+        showGlobalMessage('Year created (demo mode).', 'success');
+        return;
+      }
+      try {
+        const { data, error } = await supabase
+          .from('academic_years')
+          .insert({ name })
+          .select()
+          .single();
+        if (error) throw error;
+        allYears.unshift(data);
+        renderYears();
+        yearModal.classList.add('hidden');
+        showGlobalMessage(`Year "${name}" created.`, 'success');
+      } catch (err) {
+        showGlobalMessage(err.message, 'error');
+      }
+    });
+
+    // ── Delete Year ──
+    async function deleteYear(yearId) {
+      if (!confirm('Delete this academic year and all its data?')) return;
+      if (!supabase) {
+        allYears = allYears.filter(y => y.id !== yearId);
+        renderYears();
+        showGlobalMessage('Year deleted (demo).', 'success');
+        return;
+      }
+      try {
+        const { error } = await supabase.from('academic_years').delete().eq('id', yearId);
+        if (error) throw error;
+        allYears = allYears.filter(y => y.id !== yearId);
+        renderYears();
+        showGlobalMessage('Year deleted.', 'success');
+      } catch (err) {
+        showGlobalMessage(err.message, 'error');
+      }
+    }
+
+    // ── Add Semester ──
+    function openSemesterModal(yearId) {
+      semesterYearId.value = yearId;
+      semesterNumber.value = '';
+      semesterModal.classList.remove('hidden');
+    }
+
+    semesterForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const yearId = semesterYearId.value;
+      const number = parseInt(semesterNumber.value);
+      if (!yearId || !number) return;
+      if (!supabase) {
+        const year = allYears.find(y => y.id === yearId);
+        if (year) {
+          const sem = { id: 's' + Date.now(), number, subjects: [] };
+          year.semesters = year.semesters || [];
+          year.semesters.push(sem);
+          renderYears();
+        }
+        semesterModal.classList.add('hidden');
+        showGlobalMessage('Semester added (demo).', 'success');
+        return;
+      }
+      try {
+        const { data, error } = await supabase
+          .from('academic_semesters')
+          .insert({ year_id: yearId, number })
+          .select()
+          .single();
+        if (error) throw error;
+        const year = allYears.find(y => y.id === yearId);
+        if (year) {
+          year.semesters = year.semesters || [];
+          year.semesters.push({ ...data, subjects: [] });
+          renderYears();
+        }
+        semesterModal.classList.add('hidden');
+        showGlobalMessage(`Semester ${number} created.`, 'success');
+      } catch (err) {
+        showGlobalMessage(err.message, 'error');
+      }
+    });
+
+    // ── Delete Semester ──
+    yearsList.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.delete-semester-btn');
+      if (!btn) return;
+      const semId = btn.dataset.semesterId;
+      const yearId = btn.dataset.yearId;
+      if (!confirm('Delete this semester and all its subjects?')) return;
+      if (!supabase) {
+        const year = allYears.find(y => y.id === yearId);
+        if (year) {
+          year.semesters = (year.semesters || []).filter(s => s.id !== semId);
+          renderYears();
+        }
+        showGlobalMessage('Semester deleted (demo).', 'success');
+        return;
+      }
+      try {
+        const { error } = await supabase.from('academic_semesters').delete().eq('id', semId);
+        if (error) throw error;
+        const year = allYears.find(y => y.id === yearId);
+        if (year) {
+          year.semesters = (year.semesters || []).filter(s => s.id !== semId);
+          renderYears();
+        }
+        showGlobalMessage('Semester deleted.', 'success');
+      } catch (err) {
+        showGlobalMessage(err.message, 'error');
+      }
+    });
+
+    // ── Add Subject ──
+    function openSubjectModal(semesterId) {
+      subjectSemesterId.value = semesterId;
+      subjectNumber.value = '';
+      subjectCode.value = '';
+      subjectName.value = '';
+      subjectModal.classList.remove('hidden');
+    }
+
+    subjectForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const semesterId = subjectSemesterId.value;
+      const number = parseInt(subjectNumber.value);
+      const code = subjectCode.value.trim();
+      const name = subjectName.value.trim();
+      if (!semesterId || !number || !name) return;
+      if (!supabase) {
+        const year = allYears.find(y => (y.semesters || []).some(s => s.id === semesterId));
+        if (year) {
+          const sem = (year.semesters || []).find(s => s.id === semesterId);
+          if (sem) {
+            sem.subjects = sem.subjects || [];
+            if (sem.subjects.length >= 4) {
+              showGlobalMessage('Max 4 subjects per semester.', 'error');
+              return;
+            }
+            sem.subjects.push({ id: 'sub' + Date.now(), number, code, name });
+            renderYears();
+          }
+        }
+        subjectModal.classList.add('hidden');
+        showGlobalMessage('Subject added (demo).', 'success');
+        return;
+      }
+      try {
+        const { data, error } = await supabase
+          .from('academic_subjects')
+          .insert({ semester_id: semesterId, number, code, name })
+          .select()
+          .single();
+        if (error) throw error;
+        const year = allYears.find(y => (y.semesters || []).some(s => s.id === semesterId));
+        if (year) {
+          const sem = (year.semesters || []).find(s => s.id === semesterId);
+          if (sem) {
+            sem.subjects = sem.subjects || [];
+            sem.subjects.push(data);
+            renderYears();
+          }
+        }
+        subjectModal.classList.add('hidden');
+        showGlobalMessage(`Subject "${name}" created.`, 'success');
+      } catch (err) {
+        showGlobalMessage(err.message, 'error');
+      }
+    });
+
+    // ── Subject View (documents) ──
+    async function openSubjectView(subjectId) {
+      currentSubjectId = subjectId;
+      subjectHeader.innerHTML = '';
+      documentsList.innerHTML = '';
+      uploadMessage.textContent = '';
+      uploadMessage.className = 'message';
+      fileInput.value = '';
+
+      // find subject
+      let found = null;
+      for (const y of allYears) {
+        for (const s of (y.semesters || [])) {
+          const sub = (s.subjects || []).find(sb => sb.id === subjectId);
+          if (sub) { found = { year: y, semester: s, subject: sub }; break; }
+        }
+        if (found) break;
+      }
+      if (found) {
+        subjectHeader.innerHTML = `
+          <h2 style="font-size:1.3rem;font-weight:700;color:var(--primary);">
+            ${found.subject.code || ''} — ${found.subject.name}
+            <span style="font-size:0.8rem;font-weight:400;color:var(--text-muted);margin-left:12px;">
+              Sem ${found.semester.number} · ${found.year.name}
+            </span>
+          </h2>
+        `;
+      } else {
+        subjectHeader.innerHTML = `<h2>Subject</h2>`;
+      }
+
+      // load documents
+      await loadDocuments(subjectId);
+      subjectViewModal.classList.remove('hidden');
+    }
+
+    async function loadDocuments(subjectId) {
+      if (!supabase) {
+        documentsList.innerHTML = `
+          <div style="text-align:center;padding:20px;color:var(--text-muted);font-style:italic;background:#f8fafc;border-radius:var(--radius-sm);">
+            No documents uploaded yet. (Demo mode)
+          </div>
+        `;
+        return;
+      }
+      try {
+        const { data, error } = await supabase
+          .from('documents')
+          .select('*')
+          .eq('subject_id', subjectId)
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        renderDocuments(data || []);
+      } catch (err) {
+        documentsList.innerHTML = `<div class="message error">${err.message}</div>`;
+      }
+    }
+
+    function renderDocuments(docs) {
+      if (!docs.length) {
+        documentsList.innerHTML = `
+          <div style="text-align:center;padding:20px;color:var(--text-muted);font-style:italic;background:#f8fafc;border-radius:var(--radius-sm);">
+            No documents uploaded for this subject.
+          </div>
+        `;
+        return;
+      }
+      let html = '';
+      for (const d of docs) {
+        html += `
+          <div class="doc-item">
+            <span class="doc-name">
+              📄 ${d.name || 'Untitled'}
+              <span class="type-badge">${d.type || 'Other'}</span>
+            </span>
+            <div class="doc-actions">
+              ${d.url ? `<a href="${d.url}" target="_blank" class="primary sm" style="text-decoration:none;padding:4px 12px;border-radius:6px;background:var(--primary-light);color:#fff;font-size:0.7rem;font-weight:600;">🔗 View</a>` : ''}
+              <button class="danger sm delete-doc-btn" data-doc-id="${d.id}">🗑️</button>
+            </div>
+          </div>
+        `;
+      }
+      documentsList.innerHTML = html;
+
+      documentsList.querySelectorAll('.delete-doc-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteDocument(btn.dataset.docId));
+      });
+    }
+
+    // ── Upload Document ──
+    uploadBtn.addEventListener('click', async () => {
+      const file = fileInput.files[0];
+      if (!file) {
+        uploadMessage.textContent = 'Please select a file.';
+        uploadMessage.className = 'message error';
+        return;
+      }
+      if (file.size > 50 * 1024 * 1024) {
+        uploadMessage.textContent = 'File too large. Max 50 MB.';
+        uploadMessage.className = 'message error';
+        return;
+      }
+      const type = documentType.value;
+      const subjectId = currentSubjectId;
+      if (!subjectId) {
+        uploadMessage.textContent = 'No subject selected.';
+        uploadMessage.className = 'message error';
+        return;
+      }
+
+      if (!supabase) {
+        uploadMessage.textContent = `📎 "${file.name}" uploaded (demo mode).`;
+        uploadMessage.className = 'message success';
+        await loadDocuments(subjectId);
+        // force fake item
+        const list = documentsList;
+        const existing = list.innerHTML;
+        list.innerHTML = `
+          <div class="doc-item">
+            <span class="doc-name">📄 ${file.name} <span class="type-badge">${type}</span></span>
+            <span style="font-size:0.7rem;color:var(--text-muted);">(demo)</span>
+          </div>
+        ` + existing;
+        fileInput.value = '';
+        return;
+      }
+
+      try {
+        const filePath = `subjects/${subjectId}/${Date.now()}_${file.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('academic-docs')
+          .upload(filePath, file);
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabase.storage
+          .from('academic-docs')
+          .getPublicUrl(filePath);
+
+        const { error: insertError } = await supabase
+          .from('documents')
+          .insert({
+            subject_id: subjectId,
+            name: file.name,
+            type: type,
+            url: urlData.publicUrl,
+            storage_path: filePath,
+          });
+        if (insertError) throw insertError;
+
+        uploadMessage.textContent = '✅ Upload successful!';
+        uploadMessage.className = 'message success';
+        fileInput.value = '';
+        await loadDocuments(subjectId);
+      } catch (err) {
+        uploadMessage.textContent = '❌ ' + err.message;
+        uploadMessage.className = 'message error';
+      }
+    });
+
+    // ── Delete Document ──
+    async function deleteDocument(docId) {
+      if (!confirm('Delete this document?')) return;
+      if (!supabase) {
+        showGlobalMessage('Document deleted (demo).', 'success');
+        await loadDocuments(currentSubjectId);
+        return;
+      }
+      try {
+        const { data: docData, error: fetchError } = await supabase
+          .from('documents')
+          .select('storage_path')
+          .eq('id', docId)
+          .single();
+        if (fetchError) throw fetchError;
+
+        if (docData?.storage_path) {
+          const { error: storageError } = await supabase.storage
+            .from('academic-docs')
+            .remove([docData.storage_path]);
+          if (storageError) console.warn('Storage delete failed:', storageError);
+        }
+
+        const { error } = await supabase.from('documents').delete().eq('id', docId);
+        if (error) throw error;
+        showGlobalMessage('Document deleted.', 'success');
+        await loadDocuments(currentSubjectId);
+      } catch (err) {
+        showGlobalMessage(err.message, 'error');
+      }
+    }
+
+    // ════════════════════════════════════════════════
+    //  HELPERS
+    // ════════════════════════════════════════════════
+    function showGlobalMessage(text, type = 'info') {
+      globalMessage.textContent = text;
+      globalMessage.className = 'message ' + (type === 'error' ? 'error' : 'success');
+      clearTimeout(globalMessage._timer);
+      globalMessage._timer = setTimeout(() => {
+        globalMessage.textContent = '';
+        globalMessage.className = 'message';
+      }, 5000);
+    }
+
+    // ════════════════════════════════════════════════
+    //  INIT — check session
+    // ════════════════════════════════════════════════
+    (async function init() {
+      if (supabase) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user) {
+            currentUser = session.user;
+            showDashboard();
+            return;
+          }
+        } catch (_) { /* ignore */ }
+      }
+      loginView.classList.remove('hidden');
+      dashboardView.classList.add('hidden');
+    })();
+  </script>
+</body>
+</html>
