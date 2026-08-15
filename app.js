@@ -3,7 +3,6 @@
 // ════════════════════════════════════════════════
 const SUPABASE_URL = "https://kobdbefxahcfdxvuerfm.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_FTGewZ3U9VpXXMRFUH6UjQ_ycpgu3qA";
-
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
